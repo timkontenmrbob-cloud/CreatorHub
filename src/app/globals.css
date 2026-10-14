@@ -1,26 +1,79 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-plus-jakarta-sans), var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --color-bg-main: #0B0D11;
+  --color-bg-secondary: #101319;
+  --color-card-surface: #171A21;
+  --color-card-elevated: #20242D;
+  --color-border-subtle: #292E39;
+
+  --color-brand-blue: #397BE8;
+  --color-brand-blue-hover: #568EF0;
+  --color-brand-red: #EF5964;
+
+  --color-text-primary: #F5F7FB;
+  --color-text-secondary: #AAB2C2;
+
+  --color-status-success: #42BA83;
+  --color-status-warning: #F0B35C;
+  --color-status-error: #EF6874;
+
+  --radius-card-main: 20px;
+  --radius-card-sub: 16px;
+  --radius-btn: 14px;
+  --radius-input: 12px;
+  --radius-modal: 20px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --bg-main: #0B0D11;
+  --bg-secondary: #101319;
+  --card-surface: #171A21;
+  --card-elevated: #20242D;
+  --border-subtle: #292E39;
+  --brand-blue: #397BE8;
+  --brand-blue-hover: #568EF0;
+  --brand-red: #EF5964;
+  --text-primary: #F5F7FB;
+  --text-secondary: #AAB2C2;
+  --status-success: #42BA83;
+  --status-warning: #F0B35C;
+  --status-error: #EF6874;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html, body {
+  background-color: #0B0D11;
+  color: #F5F7FB;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Custom scrollbars matching dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+::-webkit-scrollbar-track {
+  background: #101319;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #292E39;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #397BE8;
+}
+
+/* Prevent text size adjustment */
+html {
+  -webkit-text-size-adjust: 100%;
 }
