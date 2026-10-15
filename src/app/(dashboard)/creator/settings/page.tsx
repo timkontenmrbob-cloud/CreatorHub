@@ -30,6 +30,9 @@ function SettingsForm({
   const [tiktokUsername, setTiktokUsername] = useState(user?.tiktokUsername || "");
   const [instagramUsername, setInstagramUsername] = useState(user?.instagramUsername || "");
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
+  const [publicConsent, setPublicConsent] = useState(
+    user?.publicLeaderboardConsent !== false
+  );
 
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -49,6 +52,7 @@ function SettingsForm({
         tiktokUsername: tiktokUsername.trim().replace(/^@/, ""),
         instagramUsername: instagramUsername.trim().replace(/^@/, ""),
         phoneNumber: phoneNumber.trim(),
+        publicLeaderboardConsent: publicConsent,
       });
       await refreshProfile();
       setSuccessMessage("Profil berhasil diperbarui.");
@@ -79,7 +83,7 @@ function SettingsForm({
       <Card className="p-6 sm:p-8 bg-card-surface border-border-subtle shadow-xl">
         {/* User Card Header */}
         <div className="flex items-center gap-4 pb-6 border-b border-border-subtle/60 mb-6">
-          <Avatar name={user?.displayName} size="lg" />
+          <Avatar name={user?.displayName} src={user?.photoURL} size="lg" />
           <div>
             <h3 className="text-base font-bold text-text-primary">
               {user?.displayName}
@@ -136,6 +140,31 @@ function SettingsForm({
             leftIcon={<Phone className="w-4 h-4" />}
             helperText="Digunakan untuk konfirmasi pengiriman paket hadiah merchandise."
           />
+
+          {/* Leaderboard Privacy Consent */}
+          <div className="pt-2 border-t border-border-subtle/60">
+            <label className="text-xs font-semibold text-text-primary block mb-2">
+              Privasi & Visibilitas Leaderboard
+            </label>
+            <div className="p-4 rounded-xl bg-card-elevated border border-border-subtle flex items-start gap-3.5">
+              <input
+                type="checkbox"
+                id="leaderboard-consent"
+                checked={publicConsent}
+                onChange={(e) => setPublicConsent(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-border-subtle text-brand-blue focus:ring-brand-blue/30 cursor-pointer accent-brand-blue"
+              />
+              <label htmlFor="leaderboard-consent" className="cursor-pointer select-none space-y-1">
+                <p className="text-xs font-bold text-text-primary">
+                  Tampilkan nama dan profil saya di Leaderboard Publik
+                </p>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  Nama dan handle media sosial Anda akan muncul di peringkat Top Kreator dan Top Trending Videos.
+                  Jika dinonaktifkan, perolehan poin Anda tetap dihitung namun ditampilkan sebagai &ldquo;Kreator Anonim&rdquo;.
+                </p>
+              </label>
+            </div>
+          </div>
 
           <div className="pt-4 flex justify-end">
             <Button

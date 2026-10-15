@@ -16,6 +16,7 @@ create table if not exists public.profiles (
   instagram_username text,
   whatsapp_number text,
   avatar_url text,
+  profile_completed boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -24,6 +25,7 @@ create table if not exists public.profiles (
 create index if not exists idx_profiles_email on public.profiles(email);
 create index if not exists idx_profiles_tiktok on public.profiles(tiktok_username);
 create index if not exists idx_profiles_instagram on public.profiles(instagram_username);
+create index if not exists idx_profiles_completed on public.profiles(profile_completed);
 
 -- 3. ADMIN ROLES TABLE (Protected from direct creator modifications)
 create table if not exists public.admin_roles (
@@ -80,19 +82,27 @@ begin
     tiktok_username,
     instagram_username,
     whatsapp_number,
-    avatar_url
+    avatar_url,
+    profile_completed
   )
   values (
     new.id,
-    coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'display_name', split_part(new.email, '@', 1), 'Creator'),
+    coalesce(
+      new.raw_user_meta_data->>'full_name',
+      new.raw_user_meta_data->>'name',
+      new.raw_user_meta_data->>'display_name',
+      split_part(new.email, '@', 1),
+      'Creator'
+    ),
     new.email,
     nullif(trim(regexp_replace(coalesce(new.raw_user_meta_data->>'tiktok_username', ''), '^@', '')), ''),
     nullif(trim(regexp_replace(coalesce(new.raw_user_meta_data->>'instagram_username', ''), '^@', '')), ''),
     nullif(trim(coalesce(new.raw_user_meta_data->>'whatsapp_number', new.raw_user_meta_data->>'phone_number', '')), ''),
-    nullif(trim(coalesce(new.raw_user_meta_data->>'avatar_url', '')), '')
+    nullif(trim(coalesce(new.raw_user_meta_data->>'avatar_url', new.raw_user_meta_data->>'picture', '')), ''),
+    coalesce((new.raw_user_meta_data->>'profile_completed')::boolean, false)
   )
   on conflict (id) do update set
-    full_name = excluded.full_name,
+    avatar_url = coalesce(excluded.avatar_url, profiles.avatar_url),
     email = excluded.email,
     updated_at = now();
 

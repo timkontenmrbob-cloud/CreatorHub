@@ -104,10 +104,10 @@ export default function AdminSettingsPage() {
             <span className="text-text-secondary font-medium">Masa Kedaluwarsa Poin (Expiration)</span>
             <div className="text-base font-bold text-text-primary flex items-center gap-2 font-mono">
               <Calendar className="w-4 h-4 text-brand-blue" />
-              <span>6 Bulan Kalender (FEFO)</span>
+              <span>6 Bulan Kalender</span>
             </div>
             <p className="text-[11px] text-text-secondary/70">
-              Setiap batch penerbitan memiliki lot mandiri. Penukaran memakai First Expired, First Out.
+              Setiap batch penerbitan memiliki lot mandiri. Poin yang masa berlakunya lebih dekat akan digunakan lebih dulu saat penukaran hadiah.
             </p>
           </div>
 

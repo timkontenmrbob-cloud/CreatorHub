@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/context/auth-context";
+import { isProfileComplete } from "@/lib/supabase/auth";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Logo } from "@/components/ui/logo";
@@ -50,14 +51,14 @@ export function LandingNavbar() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-3">
-              <Link href={isAdmin ? "/admin/dashboard" : "/creator/dashboard"}>
+              <Link href={isAdmin ? "/admin/dashboard" : !isProfileComplete(user) ? "/complete-profile" : "/creator/dashboard"}>
                 <Button variant="secondary" size="sm" className="gap-2">
                   <LayoutDashboard className="w-4 h-4 text-brand-blue" />
                   Dashboard
                 </Button>
               </Link>
               <div className="flex items-center gap-2 pl-2 border-l border-border-subtle">
-                <Avatar name={user.displayName} size="sm" />
+                <Avatar name={user.displayName} src={user.photoURL} size="sm" />
                 <button
                   onClick={() => logout()}
                   className="p-2 text-text-secondary hover:text-status-error transition-colors rounded-xl hover:bg-card-surface"
@@ -115,7 +116,7 @@ export function LandingNavbar() {
             {user ? (
               <>
                 <Link
-                  href={isAdmin ? "/admin/dashboard" : "/creator/dashboard"}
+                  href={isAdmin ? "/admin/dashboard" : !isProfileComplete(user) ? "/complete-profile" : "/creator/dashboard"}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <Button variant="primary" className="w-full">

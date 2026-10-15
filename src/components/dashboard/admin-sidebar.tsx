@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/lib/context/auth-context";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/ui/logo";
 import {
@@ -16,6 +17,7 @@ import {
   BarChart3,
   FileSpreadsheet,
   Settings,
+  ShieldCheck,
   X,
   ExternalLink,
 } from "lucide-react";
@@ -28,6 +30,7 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { isSuperAdmin } = useAuth();
 
   const navigationItems = [
     {
@@ -74,7 +77,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       phase: "Phase 6",
     },
     {
-      label: "Quarterly Analytics",
+      label: "UGC Analytics",
       href: "/admin/analytics",
       icon: BarChart3,
       phase: "Phase 7",
@@ -85,6 +88,16 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       icon: FileSpreadsheet,
       phase: "Phase 7",
     },
+    ...(isSuperAdmin
+      ? [
+          {
+            label: "Admin Management",
+            href: "/admin/team",
+            icon: ShieldCheck,
+            phase: "Super Admin",
+          },
+        ]
+      : []),
     {
       label: "System Settings",
       href: "/admin/settings",
@@ -106,7 +119,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       {/* Admin Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 w-64 bg-bg-secondary border-r border-border-subtle flex flex-col transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed top-0 bottom-0 left-0 z-50 w-64 bg-bg-secondary border-r border-border-subtle flex flex-col transition-transform duration-200 lg:static lg:translate-x-0 lg:h-full lg:shrink-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -131,8 +144,12 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
             Hak Akses:
           </span>
-          <Badge variant="warning" size="sm" className="font-mono text-[10px]">
-            Super Admin
+          <Badge
+            variant={isSuperAdmin ? "warning" : "brand"}
+            size="sm"
+            className="font-mono text-[10px]"
+          >
+            {isSuperAdmin ? "Super Admin" : "Admin"}
           </Badge>
         </div>
 

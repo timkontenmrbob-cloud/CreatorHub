@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
+import { isProfileComplete } from "@/lib/supabase/auth";
 import { Loader2, ShieldAlert, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,22 +11,26 @@ import Link from "next/link";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: "creator" | "admin";
+  requiredRole?: "creator" | "admin" | "super_admin";
 }
 
 export function ProtectedRoute({
   children,
   requiredRole = "creator",
 }: ProtectedRouteProps) {
-  const { user, loading, isAdmin, isConfigured } = useAuth();
+  const { user, loading, isAdmin, isSuperAdmin, isConfigured } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && isConfigured && !user) {
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+    if (!loading && isConfigured) {
+      if (!user) {
+        router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      } else if (!isAdmin && !isProfileComplete(user) && pathname !== "/complete-profile") {
+        router.push("/complete-profile");
+      }
     }
-  }, [loading, isConfigured, user, router, pathname]);
+  }, [loading, isConfigured, user, isAdmin, router, pathname]);
 
   if (loading) {
     return (
@@ -40,7 +45,7 @@ export function ProtectedRoute({
     );
   }
 
-  // If Supabase is not configured in environment
+  // If system configuration is pending
   if (!isConfigured) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center p-4">
@@ -50,16 +55,16 @@ export function ProtectedRoute({
           </div>
           <div>
             <h3 className="text-lg font-bold text-text-primary">
-              Supabase Belum Dikonfigurasi
+              Layanan Sedang Disiapkan
             </h3>
             <p className="text-sm text-text-secondary mt-1">
-              Untuk mengakses portal {requiredRole === "admin" ? "Admin" : "Creator"}, silakan lengkapi konfigurasi Supabase pada file <code className="text-brand-blue">.env.local</code>.
+              Untuk mengakses portal {requiredRole === "admin" ? "Admin" : "Creator"}, layanan autentikasi Mr.BOB Creator Hub sedang dalam konfigurasi.
             </p>
           </div>
           <div className="pt-2 flex flex-col gap-2">
             <Link href="/login">
               <Button variant="secondary" className="w-full">
-                Buka Halaman Login & Setup
+                Ke Halaman Masuk
               </Button>
             </Link>
             <Link href="/">
@@ -76,6 +81,44 @@ export function ProtectedRoute({
   // Not authenticated
   if (!user) {
     return null; // Will redirect via useEffect
+  }
+
+  // Mandatory profile completion for creators
+  if (!isAdmin && !isProfileComplete(user)) {
+    return null; // Will redirect via useEffect to /complete-profile
+  }
+
+  // Role check: If super_admin is required but user is not super_admin
+  if (requiredRole === "super_admin" && !isSuperAdmin) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center p-4">
+        <Card className="max-w-md p-6 text-center space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-status-error/15 text-status-error border border-status-error/30 mx-auto flex items-center justify-center">
+            <ShieldAlert className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-text-primary">
+              Akses Ditolak
+            </h3>
+            <p className="text-sm text-text-secondary mt-1">
+              Halaman ini dikhususkan untuk <strong>Super Administrator</strong> Mr.BOB Creator Hub. Akun Anda saat ini memiliki hak akses sebagai <strong>{user.role}</strong>.
+            </p>
+          </div>
+          <div className="pt-2 flex gap-3 justify-center">
+            <Link href="/admin/dashboard">
+              <Button variant="primary">
+                Ke Admin Dashboard
+              </Button>
+            </Link>
+            <Link href="/">
+              <Button variant="outline">
+                Beranda
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      </div>
+    );
   }
 
   // Role check: If admin is required but user is not admin

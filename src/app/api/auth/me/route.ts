@@ -31,7 +31,8 @@ export async function GET() {
     .maybeSingle();
 
   const role =
-    adminRole && (adminRole.role === "admin" || adminRole.role === "superadmin")
+    (user.email === "leadersosmed@gmail.com" ||
+      (adminRole && ["admin", "superadmin", "super_admin"].includes(adminRole.role)))
       ? "admin"
       : "creator";
 

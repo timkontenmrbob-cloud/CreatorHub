@@ -96,7 +96,7 @@ export function CreatorSidebar({ isOpen, onClose }: CreatorSidebarProps) {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 w-64 bg-bg-secondary border-r border-border-subtle flex flex-col transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed top-0 bottom-0 left-0 z-50 w-64 bg-bg-secondary border-r border-border-subtle flex flex-col transition-transform duration-200 lg:static lg:translate-x-0 lg:h-full lg:shrink-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >

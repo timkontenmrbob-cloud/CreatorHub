@@ -48,6 +48,38 @@ export function formatDate(date: string | number | Date): string {
 }
 
 /**
+ * Format date & time with WIB (Asia/Jakarta) timezone suffix
+ */
+export function formatDateTimeWIB(date: string | number | Date): string {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "-";
+  return (
+    new Intl.DateTimeFormat("id-ID", {
+      timeZone: "Asia/Jakarta",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(d) + " WIB"
+  );
+}
+
+/**
+ * Format short date in Indonesian locale (e.g. 15 Okt 2026)
+ */
+export function formatShortDateWIB(date: string | number | Date): string {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "-";
+  return new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(d);
+}
+
+/**
  * Calculate submission window:
  * A video can only be submitted during its first 30 calendar days after publication.
  * The publication date counts as Day 1.

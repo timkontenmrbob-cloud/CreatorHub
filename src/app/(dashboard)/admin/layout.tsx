@@ -14,7 +14,7 @@ export default function AdminLayout({
 
   return (
     <ProtectedRoute requiredRole="admin">
-      <div className="min-h-screen bg-bg-main flex">
+      <div className="h-screen overflow-hidden bg-bg-main flex">
         {/* Admin Sidebar */}
         <AdminSidebar
           isOpen={sidebarOpen}
@@ -22,7 +22,7 @@ export default function AdminLayout({
         />
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
           <DashboardHeader
             role="admin"
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}

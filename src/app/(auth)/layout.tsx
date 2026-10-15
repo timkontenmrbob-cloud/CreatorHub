@@ -10,7 +10,7 @@ export default function AuthLayout({
     <div className="min-h-screen bg-bg-main flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4 flex justify-center">
         <Link href="/" className="group flex flex-col items-center">
-          <Logo size="lg" showTagline />
+          <Logo size="lg" />
         </Link>
       </div>
 

@@ -1,4 +1,4 @@
-export type UserRole = "creator" | "admin";
+export type UserRole = "creator" | "admin" | "super_admin";
 
 export interface UserProfile {
   uid: string;
@@ -9,6 +9,8 @@ export interface UserProfile {
   instagramUsername?: string;
   phoneNumber?: string;
   photoURL?: string;
+  profileCompleted?: boolean;
+  publicLeaderboardConsent?: boolean;
   createdAt: string;
   updatedAt: string;
   // Point summary (denormalized for rapid dashboard display, backed by point_lots / ledger)
@@ -24,6 +26,7 @@ export interface AuthState {
   user: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   isConfigured: boolean;
   error: string | null;
 }

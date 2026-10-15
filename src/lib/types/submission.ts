@@ -1,50 +1,115 @@
-export type Platform = "tiktok" | "instagram";
+import { SupportedPlatform } from "../video-url";
 
 export type SubmissionStatus =
   | "draft"
   | "submitted"
   | "under_review"
+  | "requires_revision"
   | "approved"
-  | "rejected"
-  | "additional_evidence_required";
+  | "rejected";
 
-export type ContentCategory =
-  | "Daily Life"
-  | "Review Kelas"
-  | "Educational"
-  | "Comedy"
-  | "POV"
-  | "Facilities"
-  | "Challenge"
-  | "Others";
-
-export interface Submission {
+export interface SubmissionDraft {
   id: string;
-  creatorId: string;
-  creatorName: string;
-  creatorEmail: string;
-  platform: Platform;
+  userId: string;
+  platform: SupportedPlatform;
   videoUrl: string;
-  postingDate: string; // ISO date string (YYYY-MM-DD)
-  claimedViews: number;
-  verifiedViews?: number;
-  pointsAwarded?: number;
-  screenshotUrl: string;
-  status: SubmissionStatus;
-  category?: ContentCategory;
-  adminNotes?: string;
-  submittedAt: string;
-  reviewedAt?: string;
-  reviewedBy?: string;
+  normalizedIdentifier?: string | null;
+  postingDate: string; // YYYY-MM-DD
+  currentViews?: number | null;
+  estimatedPoints?: number | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface SubmissionDraft {
+export interface SubmissionEvidence {
   id: string;
-  creatorId: string;
-  platform: Platform;
+  submissionId: string;
+  storagePath: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  uploadedAt: string;
+  retentionStatus: "active" | "scheduled_for_deletion" | "deleted" | "disputed";
+  scheduledDeletionAt?: string | null;
+  deletedAt?: string | null;
+  publicUrl?: string | null; // Signed temporary URL
+}
+
+export interface SubmissionAuditLog {
+  id: string;
+  submissionId: string;
+  adminId: string;
+  adminName?: string | null;
+  adminEmail?: string | null;
+  previousStatus: SubmissionStatus;
+  newStatus: SubmissionStatus;
+  verifiedViews?: number | null;
+  approvedPoints?: number | null;
+  decisionReason?: string | null;
+  adminNotes?: string | null;
+  createdAt: string;
+}
+
+export interface Submission {
+  id: string;
+  userId: string;
+  platform: SupportedPlatform;
+  videoUrl: string;
+  normalizedIdentifier: string;
+  postingDate: string; // YYYY-MM-DD
+  submittedAt: string;
+  claimedViews: number;
+  estimatedPoints: number;
+  verifiedViews?: number | null;
+  approvedPoints?: number | null;
+  status: SubmissionStatus;
+  adminNotes?: string | null;
+  reviewedAt?: string | null;
+  reviewedBy?: string | null;
+  agreementAccepted?: boolean;
+  agreementVersion?: string | null;
+  agreementAcceptedAt?: string | null;
+  evidence?: SubmissionEvidence[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminSubmissionItem extends Submission {
+  creatorName: string;
+  creatorEmail: string;
+  creatorAvatar?: string | null;
+  auditLogs?: SubmissionAuditLog[];
+}
+
+export interface CreateSubmissionInput {
+  platform: SupportedPlatform;
+  videoUrl: string;
+  postingDate: string; // YYYY-MM-DD
+  claimedViews: number;
+  evidenceFile: File;
+  draftId?: string;
+  agreementAccepted: boolean;
+  agreementVersion?: string;
+}
+
+export interface SaveDraftInput {
+  id?: string;
+  platform: SupportedPlatform;
   videoUrl: string;
   postingDate: string;
-  savedAt: string;
+  currentViews?: number;
+}
+
+export interface ApproveSubmissionInput {
+  verifiedViews: number;
+  adminNotes?: string;
+}
+
+export interface RejectSubmissionInput {
+  rejectionReason: string;
+  adminNotes?: string;
+}
+
+export interface RequestEvidenceInput {
+  requestNotes: string;
 }

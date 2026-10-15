@@ -22,13 +22,7 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 async function provisionAdmin() {
-  const targetEmail = process.argv[2];
-
-  if (!targetEmail || !targetEmail.includes("@")) {
-    console.error("❌ Error: Harap sertakan email akun target yang valid.");
-    console.error("   Contoh: npx tsx scripts/provision-admin.ts admin@mrbobkampunginggris.com");
-    process.exit(1);
-  }
+  const targetArg = process.argv[2]?.trim();
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey =
@@ -44,30 +38,52 @@ async function provisionAdmin() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  console.log(`🔍 Mencari akun dengan email: ${targetEmail}...`);
-
-  // 1. Find user in auth.users using Admin API
+  // Fetch all users and active admin roles
   const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
-
   if (listError) {
     console.error("❌ Gagal mengambil daftar pengguna dari Supabase Auth:", listError.message);
     process.exit(1);
   }
 
-  const targetUser = usersData.users.find(
-    (u) => u.email?.toLowerCase() === targetEmail.toLowerCase()
+  const { data: adminList } = await supabase.from("admin_roles").select("user_id, role");
+  const adminIds = new Set((adminList || []).map((a) => a.user_id));
+
+  if (!targetArg) {
+    console.log("==================================================================");
+    console.log("MR.BOB CREATOR HUB — DAFTAR PENGGUNA TERDAFTAR");
+    console.log("==================================================================");
+    usersData.users.forEach((u, i) => {
+      const isAdmin = adminIds.has(u.id);
+      console.log(
+        `${i + 1}. [${isAdmin ? "ADMIN" : "CREATOR"}] ${u.email} (UID: ${u.id})`
+      );
+    });
+    console.log("==================================================================");
+    console.log("💡 Cara memberikan hak akses Administrator:");
+    console.log("   npx tsx scripts/provision-admin.ts <email-atau-uid>");
+    console.log("   Contoh: npx tsx scripts/provision-admin.ts bayuuuajisantoso@gmail.com");
+    console.log("==================================================================");
+    return;
+  }
+
+  console.log(`🔍 Mencari akun: "${targetArg}"...`);
+
+  // Find user by email or by id
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetArg);
+  const targetUser = usersData.users.find((u) =>
+    isUuid ? u.id === targetArg : u.email?.toLowerCase() === targetArg.toLowerCase()
   );
 
   if (!targetUser) {
-    console.error(`❌ Pengguna dengan email "${targetEmail}" belum terdaftar di Supabase Auth.`);
-    console.error("   Silakan daftarkan akun terlebih dahulu melalui halaman /register.");
+    console.error(`❌ Pengguna "${targetArg}" tidak ditemukan di Supabase Auth.`);
+    console.error("   Pastikan akun sudah mendaftar terlebih dahulu via Google Sign-In atau /register.");
     process.exit(1);
   }
 
   const userId = targetUser.id;
-  console.log(`✅ Akun ditemukan! UID: ${userId}`);
+  console.log(`✅ Akun ditemukan! Email: ${targetUser.email} | UID: ${userId}`);
 
-  // 2. Insert or upsert into protected admin_roles table
+  // Upsert into protected admin_roles table
   const { error: roleError } = await supabase.from("admin_roles").upsert({
     user_id: userId,
     role: "admin",
@@ -78,11 +94,18 @@ async function provisionAdmin() {
     process.exit(1);
   }
 
+  // Ensure profile exists and is marked completed
+  await supabase
+    .from("profiles")
+    .update({ profile_completed: true })
+    .eq("id", userId);
+
   console.log("==================================================================");
-  console.log("🎉 SUKSES! Hak akses Administrator berhasil diberikan.");
+  console.log("🎉 SUKSES! Hak akses Administrator resmi diberikan.");
   console.log(`   User ID : ${userId}`);
   console.log(`   Email   : ${targetUser.email}`);
   console.log(`   Role    : admin`);
+  console.log("   Akses   : /admin/dashboard");
   console.log("==================================================================");
 }
 

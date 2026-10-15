@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated reports & temp artifacts
+/public/reports/
+/public/reports
+*.pdf
+/supabase/.temp/

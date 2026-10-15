@@ -15,7 +15,7 @@ $$\text{1.000 verified views} = \text{10 Poin} \quad \left(\text{points} = \lflo
 - **Zero Follower Barrier:** Open to all creators without minimum follower requirements.
 - **Permanent Dark Mode:** High-contrast, sleek SaaS-grade design system (`#0B0D11` background, `#397BE8` primary blue).
 - **30-Day Submission Window:** Videos must be submitted within 30 calendar days of publication.
-- **FEFO Point Expiration:** Points remain valid for 6 calendar months and are consumed First Expired, First Out.
+- **6-Month Point Expiration:** Points remain valid for 6 calendar months; lots closest to expiration are prioritized first upon redemption.
 
 ---
 
@@ -118,13 +118,28 @@ Once executed, the user is assigned the `admin` role in the protected `admin_rol
 ## 📌 Phase Status
 
 - **Phase 1: UI Foundation & Landing Polish** — **COMPLETED**
-- **Checkpoint 1.5: Firebase to Supabase Migration** — **COMPLETED**
-  - Supabase Auth with `@supabase/ssr` (HTTP-only cookie sessions)
-  - PostgreSQL schema (`profiles`, `admin_roles`) with triggers & RLS
-  - Private Storage architecture (`submission-evidence`, 14-day retention)
-  - CLI Admin Provisioning (`scripts/provision-admin.ts`)
-  - Complete removal of Firebase dependencies
-- **Next: Phase 2 (Creator Dashboard & Point Wallet)**
+- **Checkpoint 1.5: Firebase to Supabase Migration & Google OAuth** — **COMPLETED**
+- **Phase 2: Creator Dashboard & Point Wallet** — **COMPLETED**
+  - Discrete Point Lots with 6-month calendar expiration (`point_lots`)
+  - Immutable Financial Ledger with idempotency keys (`point_transactions`)
+  - Earliest-expiring point consumption via secure database functions
+  - Dynamic Creator Dashboard with real wallet data, nearest target reward, and expiration alert card
+  - Comprehensive My Points wallet page (`/creator/my-points`)
+  - Admin Points Management & Ledger dashboard (`/admin/points`)
+  - Complete elimination of "FEFO" jargon in favor of natural language
+- **Checkpoint 2: Database Verification & Admin Issuance Security Audit** — **COMPLETED**
+  - Remote Supabase tables & RPC functions verified against live authenticated sessions
+  - RLS policies verified: cross-creator reading blocked, unauthorized mutation blocked
+  - Mandatory 10-char auditable reason and admin verification badges on manual issuance
+- **Phase 3: Submit Content System & My Contents** — **COMPLETED**
+  - Multi-platform URL normalization (TikTok desktop/mobile/shortlinks, IG Reels & Posts)
+  - Canonical identifier generation (`tiktok:<id>`, `instagram:reel:<code>`) to block duplicate submissions
+  - 30-Day Smart Submission Reminder with color-coded urgency countdown (15–30d, 4–14d, 1–3d, expired)
+  - Real-time instant points estimator (`Math.floor(views / 100)`)
+  - Private screenshot insight upload to Supabase Storage (`submission-evidence`) with 1-hour signed URLs
+  - Draft management system (`/creator/submit` & `/creator/my-contents`) without extending deadline
+  - Real-time submission integration in Creator Dashboard
+- **Next: Phase 4 (Admin Verification & Review System)**
 
 ---
 

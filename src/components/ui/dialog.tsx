@@ -11,6 +11,7 @@ export interface DialogProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  hideHeader?: boolean;
 }
 
 export function Dialog({
@@ -20,6 +21,7 @@ export function Dialog({
   description,
   children,
   className,
+  hideHeader = false,
 }: DialogProps) {
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,29 +56,33 @@ export function Dialog({
           className
         )}
       >
-        <div className="flex items-start justify-between pb-4">
-          <div>
-            {title && (
-              <h2 className="text-xl font-bold text-text-primary tracking-tight">
-                {title}
-              </h2>
-            )}
-            {description && (
-              <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                {description}
-              </p>
-            )}
+        {!hideHeader && (
+          <div className="flex items-start justify-between pb-4">
+            <div>
+              {title && (
+                <h2 className="text-xl font-bold text-text-primary tracking-tight">
+                  {title}
+                </h2>
+              )}
+              {description && (
+                <p className="text-sm text-text-secondary mt-1 leading-relaxed">
+                  {description}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={onClose}
+              className="rounded-xl p-1.5 text-text-secondary hover:text-text-primary hover:bg-card-elevated transition-colors"
+              aria-label="Tutup"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-xl p-1.5 text-text-secondary hover:text-text-primary hover:bg-card-elevated transition-colors"
-            aria-label="Tutup"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        )}
 
-        <div className="pt-2">{children}</div>
+        <div className={cn(!hideHeader && "pt-2", hideHeader && "flex flex-col flex-1 min-h-0 overflow-hidden")}>
+          {children}
+        </div>
       </div>
     </div>
   );

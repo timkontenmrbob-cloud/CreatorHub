@@ -1,4 +1,7 @@
+"use client";
+
 import * as React from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -16,6 +19,8 @@ export function Avatar({
   className,
   ...props
 }: AvatarProps) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+
   const sizeStyles = {
     sm: "w-8 h-8 text-xs",
     md: "w-10 h-10 text-sm",
@@ -32,6 +37,8 @@ export function Avatar({
     return n.slice(0, 2).toUpperCase();
   };
 
+  const showImage = Boolean(src && failedSrc !== src);
+
   return (
     <div className="relative inline-block">
       <div
@@ -42,9 +49,16 @@ export function Avatar({
         )}
         {...props}
       >
-        {src ? (
+        {showImage ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={name || "Avatar"} className="w-full h-full object-cover" />
+          <img
+            src={src}
+            alt={name || "Avatar"}
+            className="w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
+            onError={() => setFailedSrc(src || "")}
+          />
         ) : (
           <span className="text-brand-blue">{getInitials(name)}</span>
         )}

@@ -14,7 +14,7 @@ export default function CreatorLayout({
 
   return (
     <ProtectedRoute requiredRole="creator">
-      <div className="min-h-screen bg-bg-main flex">
+      <div className="h-screen overflow-hidden bg-bg-main flex">
         {/* Creator Sidebar */}
         <CreatorSidebar
           isOpen={sidebarOpen}
@@ -22,7 +22,7 @@ export default function CreatorLayout({
         />
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
           <DashboardHeader
             role="creator"
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
