@@ -4,19 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
 import { Card } from "@/components/ui/card";
-import { isProfileComplete } from "@/lib/supabase/auth";
+import { isProfileComplete, isSafeLocalRedirect } from "@/lib/supabase/auth";
 import { AlertCircle, Loader2 } from "lucide-react";
 
-interface GoogleSignInCardProps {
-  title?: string;
-}
-
-export function GoogleSignInCard({
-  title = "Masuk ke Creator Hub",
-}: GoogleSignInCardProps) {
+export function GoogleSignInCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "";
+  const requestedRedirect = searchParams.get("redirect");
+  const redirectUrl = isSafeLocalRedirect(requestedRedirect) ? requestedRedirect : "";
   const errorParam = searchParams.get("error");
 
   const { signInWithGoogle, user, loading, isAdmin, isConfigured } = useAuth();
@@ -71,7 +66,7 @@ export function GoogleSignInCard({
       {/* Header */}
       <div className="text-center mb-6 pt-1">
         <h2 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight">
-          {title}
+          Masuk ke Mr.BOB Creator Hub
         </h2>
       </div>
 
@@ -118,7 +113,7 @@ export function GoogleSignInCard({
           )}
 
           <span>
-            {isSubmitting ? "Menghubungkan ke Google..." : "Continue with Google"}
+            {isSubmitting ? "Menghubungkan ke Google..." : "Lanjutkan dengan Google"}
           </span>
         </button>
       </div>

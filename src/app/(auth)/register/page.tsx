@@ -16,7 +16,7 @@ export default function RegisterPage() {
           </Card>
         }
       >
-        <GoogleSignInCard title="Masuk ke Creator Hub" />
+        <GoogleSignInCard />
       </Suspense>
     </div>
   );

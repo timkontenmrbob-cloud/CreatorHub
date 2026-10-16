@@ -125,14 +125,17 @@ export async function loginUser(email: string, pass: string): Promise<string> {
   return data.user.id;
 }
 
-/**
- * Sign in using Google OAuth via Supabase
- */
+/** Only allow paths on this app after OAuth. */
+export function isSafeLocalRedirect(path: string | null | undefined): path is string {
+  return Boolean(path?.startsWith("/") && !path.startsWith("//") && !path.includes("\\"));
+}
+
+/** Sign in using Google OAuth via Supabase. */
 export async function signInWithGoogle(redirectTo?: string): Promise<void> {
   const supabase = createClient();
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const callbackUrl = new URL("/auth/callback", origin);
-  if (redirectTo && redirectTo.startsWith("/") && redirectTo !== "/complete-profile") {
+  if (isSafeLocalRedirect(redirectTo) && redirectTo !== "/complete-profile") {
     callbackUrl.searchParams.set("next", redirectTo);
   }
 

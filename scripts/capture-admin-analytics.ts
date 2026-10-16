@@ -75,8 +75,8 @@ async function capture() {
 
     // Get existing page target from /json/list
     const listRes = await fetch(`http://127.0.0.1:${port}/json/list`);
-    const targets = await listRes.json();
-    const pageTarget = targets.find((t: any) => t.type === "page") || targets[0];
+    const targets: Array<{ type: string; webSocketDebuggerUrl: string; id: string }> = await listRes.json();
+    const pageTarget = targets.find((target) => target.type === "page") || targets[0];
     const wsUrl = pageTarget.webSocketDebuggerUrl;
     console.log("Using page target:", pageTarget.id);
 

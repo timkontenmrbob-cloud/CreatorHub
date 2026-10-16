@@ -48,6 +48,8 @@ SUPABASE_SECRET_KEY=your_service_role_secret_key
 ### 4. Database Setup
 Apply the initial PostgreSQL migration located in `supabase/migrations/20261014000000_init_auth_and_profiles.sql` via your Supabase SQL Editor.
 
+For production Google Sign In branding and callback configuration, follow [the OAuth branding checklist](docs/GOOGLE_SIGN_IN_BRANDING.md).
+
 ### 5. Run Development Server
 ```bash
 npm run dev

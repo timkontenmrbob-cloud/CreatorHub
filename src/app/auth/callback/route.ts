@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { getSupabaseEnv } from "@/lib/supabase/config";
-import { isProfileComplete } from "@/lib/supabase/auth";
+import { isProfileComplete, isSafeLocalRedirect } from "@/lib/supabase/auth";
 import { Database } from "@/lib/types/database";
 
 export async function GET(request: NextRequest) {
@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
   // Sanitized redirect destination for completed creator profile
   let destination = rawNext || "/creator/dashboard";
   if (
-    !destination.startsWith("/") ||
+    !isSafeLocalRedirect(destination) ||
     destination === "/complete-profile" ||
     destination.startsWith("/login") ||
     destination.startsWith("/register")
