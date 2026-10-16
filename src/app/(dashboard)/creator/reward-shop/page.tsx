@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { RewardCatalogCard } from "@/components/rewards/reward-catalog-card";
 import {
   Coins,
   Gift,
@@ -203,88 +204,32 @@ export default function RewardShopPage() {
         </div>
       </div>
 
-      {/* Catalog Grid — Clean E-Commerce Online Shop UI */}
+      {/* Compact reward catalog */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <Card
               key={i}
-              className="p-4 bg-card-surface border-border-subtle rounded-2xl animate-pulse space-y-4"
+              className="flex items-center gap-3 p-3 bg-card-surface border-border-subtle rounded-2xl animate-pulse"
             >
-              <div className="aspect-square bg-card-elevated rounded-xl" />
-              <div className="h-4 bg-card-elevated rounded w-3/4" />
-              <div className="flex justify-between items-center pt-2">
-                <div className="h-4 bg-card-elevated rounded w-1/3" />
-                <div className="h-8 bg-card-elevated rounded w-24" />
+              <div className="h-[76px] w-[76px] sm:h-20 sm:w-20 shrink-0 bg-card-elevated rounded-xl" />
+              <div className="flex-1 min-w-0 space-y-4">
+                <div className="h-4 bg-card-elevated rounded w-3/4" />
+                <div className="h-3 bg-card-elevated rounded w-1/2" />
               </div>
             </Card>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {rewards.map((reward) => {
-            const isBroken = brokenImages[reward.id];
-            const hasEnough = availablePoints >= reward.requiredPoin;
-
-            return (
-              <Card
-                key={reward.id}
-                className="group flex flex-col justify-between overflow-hidden bg-card-surface border-border-subtle rounded-2xl hover:border-brand-blue/50 hover:shadow-xl hover:shadow-brand-blue/5 transition-all duration-300"
-              >
-                {/* 1. Reward Image (1:1 Aspect Ratio) */}
-                <div className="relative aspect-square w-full overflow-hidden bg-card-elevated">
-                  {reward.image && !isBroken ? (
-                    <Image
-                      src={reward.image}
-                      alt={reward.name}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={() => {
-                        setBrokenImages((prev) => ({ ...prev, [reward.id]: true }));
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-text-secondary bg-gradient-to-br from-card-surface to-card-elevated p-6 text-center">
-                      <Gift className="w-12 h-12 text-brand-blue/40 mb-2" />
-                      <span className="text-xs font-semibold text-text-secondary">
-                        Official Mr.BOB
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card Content & Action */}
-                <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 gap-4">
-                  {/* 2. Reward Name */}
-                  <h3 className="text-sm sm:text-base font-bold text-text-primary group-hover:text-brand-blue transition-colors line-clamp-2 leading-snug">
-                    {reward.name}
-                  </h3>
-
-                  {/* 3. Bottom Row: Left: Required Points, Right: Lihat Detail */}
-                  <div className="flex items-center justify-between pt-3 border-t border-border-subtle/50 mt-auto">
-                    <div className="flex flex-col">
-                      <span className="text-base sm:text-lg font-extrabold text-brand-blue font-mono">
-                        {formatPoints(reward.requiredPoin)}
-                      </span>
-                      <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
-                        Poin
-                      </span>
-                    </div>
-
-                    <Button
-                      variant={hasEnough ? "primary" : "secondary"}
-                      size="sm"
-                      onClick={() => handleOpenDetail(reward)}
-                      className="text-xs font-semibold rounded-xl px-3.5 py-1.5 shadow-sm"
-                    >
-                      Lihat Detail
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+          {rewards.map((reward) => (
+            <RewardCatalogCard
+              key={reward.id}
+              reward={reward}
+              onOpenDetail={handleOpenDetail}
+              variant="shop"
+            />
+          ))}
         </div>
       )}
 

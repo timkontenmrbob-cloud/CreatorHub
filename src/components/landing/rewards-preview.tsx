@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Card } from "@/components/ui/card";
+import { RewardCatalogCard } from "@/components/rewards/reward-catalog-card";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { OFFICIAL_REWARDS, Reward } from "@/lib/types/reward";
 import { formatPoints } from "@/lib/utils";
-import { Sparkles, Gift } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export function RewardsPreview() {
@@ -28,52 +28,14 @@ export function RewardsPreview() {
           </p>
         </div>
 
-        {/* E-Commerce / Online Shop Style Catalog Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {/* Compact catalog matching the creator reward shop */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {OFFICIAL_REWARDS.map((reward) => (
-            <Card
+            <RewardCatalogCard
               key={reward.id}
-              className="bg-card-surface border-border-subtle hover:border-brand-blue/40 transition-all duration-200 overflow-hidden flex flex-col justify-between group rounded-[20px]"
-            >
-              <div>
-                {/* 1. Product Image at Top */}
-                <div className="relative aspect-4/3 w-full bg-card-elevated overflow-hidden">
-                  {reward.image ? (
-                    <Image
-                      src={reward.image}
-                      alt={reward.name}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-text-secondary/40">
-                      <Gift className="w-10 h-10" />
-                    </div>
-                  )}
-                </div>
-
-                {/* 2. Product Name */}
-                <div className="p-4 pb-2">
-                  <h3 className="text-sm sm:text-base font-bold text-text-primary leading-snug line-clamp-2 group-hover:text-brand-blue transition-colors">
-                    {reward.name}
-                  </h3>
-                </div>
-              </div>
-
-              {/* 3. Bottom Row: Points on left, "Lihat Detail" on right */}
-              <div className="p-4 pt-3 border-t border-border-subtle/50 flex items-center justify-between mt-auto">
-                <span className="text-sm font-bold text-brand-blue font-mono">
-                  {formatPoints(reward.requiredPoin)} Poin
-                </span>
-                <button
-                  onClick={() => setActiveModalReward(reward)}
-                  className="text-xs font-semibold text-text-secondary hover:text-brand-blue transition-colors cursor-pointer"
-                >
-                  Lihat Detail
-                </button>
-              </div>
-            </Card>
+              reward={reward}
+              onOpenDetail={setActiveModalReward}
+            />
           ))}
         </div>
       </div>
